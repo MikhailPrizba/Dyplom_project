@@ -10,7 +10,7 @@ def seller_registration(request):
             user.is_seller = True
             user.save()
             login(request, user)
-            return redirect('home')
+            return redirect('store:home/')
     else:
         form = SellerRegistrationForm()
     return render(request, 'seller_registration.html', {'form': form})
@@ -23,7 +23,7 @@ def buyer_registration(request):
             user.is_buyer = True
             user.save()
             login(request, user)
-            return redirect('home')
+            return redirect('store: home')
     else:
         form = BuyerRegistrationForm()
     return render(request, 'buyer_registration.html', {'form': form})

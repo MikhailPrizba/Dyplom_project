@@ -21,8 +21,11 @@ from . import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('store/', include('store.urls')),
-    path('users/', include('users.urls')),
+    path('store/', include('store.urls', namespace='store')),
+    path('users/', include('users.urls', namespace='users')),
    
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

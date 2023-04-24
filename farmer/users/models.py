@@ -4,11 +4,10 @@ from django.contrib.auth.models import AbstractUser, Permission,Group
 class CustomUser(AbstractUser):
     pass
 class Seller(AbstractUser):
-    nickname = models.CharField(max_length=50)
     geolocation = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=20)
-    rating = models.FloatField()
-    photo = models.ImageField(upload_to='seller_photos/', blank=True, null=True)
+    rating = models.FloatField(default=0, blank=True, null=True)
+    photo = models.ImageField(upload_to='images/seller_photos/', blank=True, null=True)
     groups = models.ManyToManyField(Group, related_name="%(class)s_groups")
     user_permissions = models.ManyToManyField(Permission, related_name="%(class)s_permissions")
 
