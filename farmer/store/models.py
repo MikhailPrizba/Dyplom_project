@@ -62,3 +62,28 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+    
+class Comment(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['product']),
+            models.Index(fields=['user']),
+            models.Index(fields=['active']),
+            models.Index(fields=['created_at']),
+        ]
+    
+
+    def get_absolute_url(self):
+        return reverse("store:product_detail", args=[self.product.slug, self.product.id])
+        #return reverse("store:product_detail", args=[self.object.product.slug, self.object.product.id])
+
+    def __str__(self) -> str:
+        return f'{self.user.username} - {self.product.name}'
