@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users.apps.UsersConfig',
     'store.apps.StoreConfig',
+
+    
     
     
 ]
@@ -80,7 +82,7 @@ WSGI_APPLICATION = 'farmer.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2', 
-		'NAME': 'dyplom_project_3', 
+		'NAME': 'dyplom_project_8', 
 		'USER': 'misha', 
 		'PASSWORD': 'misha', 
 		'HOST': '127.0.0.1', 
@@ -130,6 +132,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'users.CustomUser'
+
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'

@@ -1,7 +1,11 @@
 from django.db import models
-from users.models import Seller
+
 from django.urls import reverse
+
+from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 # Create your models here.
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -14,21 +18,24 @@ class Category(models.Model):
         indexes = [
             models.Index(fields=['name']),
         ]
+
     def get_absolute_url(self):
         return reverse("store:product_list_by_category", args=[self.slug])
-    
 
     def __str__(self):
         return self.name
 
+
 class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
+    seller = models.ForeignKey(
+        User, on_delete=models.CASCADE, editable=False, related_name='seller_products', )
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    slug = models.SlugField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100)
     description = models.TextField(blank=True, null=True)
-    image = models.ImageField(upload_to='images/products/', blank=True, null=True)
+    image = models.ImageField(
+        upload_to='images/products/', blank=True, null=True)
     available = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -41,6 +48,14 @@ class Product(models.Model):
             models.Index(fields=['name']),
             models.Index(fields=['id', 'slug']),
         ]
+
+    def save(self, *args, **kwargs):
+        if not self.pk:  # если это новый объект
+            self.seller = self.seller or kwargs.pop(
+                'seller', None) or get_user_model().objects.get(pk=1)
+            # попытаться установить `seller` из self.seller или из переданных kwargs
+            # если не установлено, установить текущего пользователя, который создал продукт
+            super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse("store:product_detail", args=[self.slug, self.id])

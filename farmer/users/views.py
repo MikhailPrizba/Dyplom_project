@@ -1,29 +1,21 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
-from .forms import SellerRegistrationForm, BuyerRegistrationForm
+from django.contrib.auth.forms import UserCreationForm
+from .models import Seller, Buyer
 
-def seller_registration(request):
-    if request.method == 'POST':
-        form = SellerRegistrationForm(request.POST, request.FILES)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.is_seller = True
-            user.save()
-            login(request, user)
-            return redirect('store:home/')
-    else:
-        form = SellerRegistrationForm()
-    return render(request, 'seller_registration.html', {'form': form})
 
-def buyer_registration(request):
+def register(request):
     if request.method == 'POST':
-        form = BuyerRegistrationForm(request.POST)
+        form = UserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.is_buyer = True
+            user = form.save()
+            user.refresh_from_db()
             user.save()
-            login(request, user)
-            return redirect('store: home')
+            user_type = request.POST.get('user_type')
+            if user_type == 'seller':
+                Seller.objects.create(user=user, photo=request.POST.get('photo'), location=request.POST.get('location'))
+            elif user_type == 'buyer':
+                Buyer.objects.create(user=user, shipping_address=request.POST.get('shipping_address'), billing_address=request.POST.get('billing_address'))
+            return redirect('home')
     else:
-        form = BuyerRegistrationForm()
-    return render(request, 'buyer_registration.html', {'form': form})
+        form = UserCreationForm()
+    return render(request, 'register.html', {'form': form})
