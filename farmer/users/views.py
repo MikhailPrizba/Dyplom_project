@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import SellerForm, BuyerForm, BuyerEditForm, SellerEditForm, UserEditForm
 from.models import Seller, Buyer
-
+from order.models import Order, OrderItem
 
 
 def register_seller(request):
@@ -68,3 +68,23 @@ def edit(request):
                     'users/edit.html',
                     {'user_form': user_form,
                     'profile_form': profile_form})
+
+
+
+
+@login_required(login_url='users:login')
+def profile(request):
+    
+    if request.user.is_staff:
+        profile = Seller.objects.get(user=request.user)
+        
+    else:
+        profile = Buyer.objects.get(user=request.user)
+        orders = Order.objects.filter(user=request.user)
+        for order in orders:
+            print(order.id)
+            for item in order.items.values():
+                print(item)
+        
+
+    return render(request, 'users/profile.html', {'profile': profile, 'orders': orders})
