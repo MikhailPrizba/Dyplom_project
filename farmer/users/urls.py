@@ -12,7 +12,7 @@ urlpatterns = [
     path('change-password/', PasswordChangeView.as_view(
         template_name='users/registration/change_password.html'), name='change_password'),
     path('change-password_done/', PasswordChangeDoneView.as_view(
-        template_name='change_password_done.html'), name='change_password_done'),
+        template_name='change_password_done.html'), name='password_change_done'),
     path('password-reset/', PasswordResetView.as_view(template_name='users/registration/password_reset.html',
          email_template_name='users/registration/password_reset_email.html', success_url=reverse_lazy('users:password_reset_done')), name='password_reset'),
     path('password-reset/done/', PasswordResetDoneView.as_view(

@@ -77,14 +77,10 @@ def profile(request):
     
     if request.user.is_staff:
         profile = Seller.objects.get(user=request.user)
-        
+        context = {'profile': profile}
     else:
         profile = Buyer.objects.get(user=request.user)
         orders = Order.objects.filter(user=request.user)
-        for order in orders:
-            print(order.id)
-            for item in order.items.values():
-                print(item)
-        
+        context = {'profile': profile, 'orders': orders}
 
-    return render(request, 'users/profile.html', {'profile': profile, 'orders': orders})
+    return render(request, 'users/profile.html', context)
