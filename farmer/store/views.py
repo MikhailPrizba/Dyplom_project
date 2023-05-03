@@ -1,0 +1,55 @@
+from django.shortcuts import render
+
+# Create your views here.
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
+from .models import Product, Category, Comment
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from cart.forms import CartAddProductForm
+from django.contrib.auth.models import User
+from django.urls import reverse_lazy,reverse
+
+
+def home(request: HttpRequest, category_slug=None):
+    category = None
+    categories = Category.objects.all()
+
+    products = Product.objects.filter(available=True)
+    if category_slug:
+        category = get_object_or_404(Category, slug=category_slug)
+        products = products.filter(category=category)
+
+    return render(request,
+                  'store/products/home.html',
+                  {'categories': categories,
+                   'products': products,
+                   'category': category})
+
+
+def product_detail(request: HttpRequest, slug, id, ):
+    product = get_object_or_404(Product, id=id, slug=slug, available=True)
+    cart_product_form = CartAddProductForm()
+    comments = product.comment_set.all()
+    return render(request,
+                  'store/products/product_detail.html',
+                  {'product': product, 'cart_product_form': cart_product_form, 'comments':comments},
+                  )
+
+class CommentCreateView(CreateView): #создание комментариев
+    model = Comment
+    fields = ['text']
+
+    def form_valid(self, form) -> HttpResponse:
+        print(self.kwargs)
+        form.instance.product = Product.objects.get(slug = self.kwargs['slug'], id = self.kwargs['id'])
+        form.instance.user = User.objects.get(id = self.request.user.id)
+        
+        return super().form_valid(form)
+class CommentUpdateView(UpdateView): 
+    model = Comment
+    fields = ['text']
+
+class CommentDeleteView(DeleteView):
+    model = Comment
+    def get_success_url(self, **kwargs) -> str:
+        return reverse_lazy('store:product_detail', kwargs={'slug':self.object.product.slug, 'id' :self.object.product.id})
