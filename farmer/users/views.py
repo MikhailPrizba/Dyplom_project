@@ -1,21 +1,70 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm
-from .models import Seller, Buyer
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .forms import SellerForm, BuyerForm, BuyerEditForm, SellerEditForm, UserEditForm
+from.models import Seller, Buyer
 
 
-def register(request):
+
+def register_seller(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = SellerForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            user.refresh_from_db()
-            user.save()
-            user_type = request.POST.get('user_type')
-            if user_type == 'seller':
-                Seller.objects.create(user=user, photo=request.POST.get('photo'), location=request.POST.get('location'))
-            elif user_type == 'buyer':
-                Buyer.objects.create(user=user, shipping_address=request.POST.get('shipping_address'), billing_address=request.POST.get('billing_address'))
-            return redirect('home')
+            form.save()
+            username = form.cleaned_data.get('username')
+            messages.success(request, f'Account created for {username}!')
+            return redirect('users:login')
     else:
-        form = UserCreationForm()
-    return render(request, 'register.html', {'form': form})
+        form = SellerForm()
+    return render(request, 'users/registration/register_seller.html', {'form': form})
+
+
+def register_buyer(request):
+    if request.method == 'POST':
+        form = BuyerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            messages.success(request, f'Account created for {username}!')
+            return redirect('users:login')
+    else:
+        form = BuyerForm()
+    return render(request, 'users/registration/register_buyer.html', {'form': form})
+
+
+
+
+
+@login_required
+def edit(request):
+    if request.method == 'POST':
+        user_form = UserEditForm(instance=request.user,
+                                data=request.POST)
+        if request.user.is_staff:
+            profile_form = SellerEditForm(
+                                    instance=request.user.seller,
+                                    data=request.POST,
+                                    files=request.FILES)
+        else:
+            profile_form = BuyerEditForm(
+                                    instance=request.user.buyer,
+                                    data=request.POST,
+                                    files=request.FILES)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, f'Account updated!')
+            return redirect('users:profile')
+            
+    else:
+        user_form = UserEditForm(instance=request.user)
+        if request.user.is_staff:
+            profile_form = SellerEditForm(
+                                    instance=request.user.seller)
+        else:
+            profile_form = BuyerEditForm(
+                                    instance=request.user.buyer)
+    return render(request,
+                    'users/edit.html',
+                    {'user_form': user_form,
+                    'profile_form': profile_form})
