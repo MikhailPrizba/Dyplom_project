@@ -184,6 +184,34 @@ ul.errorlist {
     overflow:hidden;
 }
 
+.comment-list {
+    
+    margin: 0;
+    padding: 0;
+}
+.comment {
+    margin-bottom: 20px;
+    padding: 10px;
+   
+}
+
+.comment h4 {
+    margin-top: 0;
+    margin-bottom: 3px;
+    font-weight: bold;
+    
+}
+
+.comment p {
+    color:#333;
+    font-size:16px;
+    font-weight:bold;
+}
+
+.comment .meta {
+    font-size: 15px;
+    
+}
 .product-list .item {
     width:15%;
     padding:10px 20px 10px 0;

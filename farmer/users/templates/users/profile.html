@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+  <h1>Profile</h1>
+  <p>Username: {{ profile.user.username }}</p>
+  {% if user.is_staff %}
+  <div class = 'profile' >
+  <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}" , >
+
+    <p>Address: {{ profile.address }}</p>
+    <p>Phone number: {{ profile.phone_number }}</p>
+  </div>
+  
+    <a href="{% url 'admin:login' %}" class="button">Work with product</a>
+    
+    <p>You can <a href="{% url 'users:edit' %}">edit your profile</a>
+      or <a href="{% url 'users:change_password' %}">change your password</a>.</p>
+  {% else %}
+  <div class = 'profile'>
+    <p>Phone number: {{ profile.phone_number }}</p>
+    <p>You can <a href="{% url 'users:edit' %}">edit your profile</a>
+      or <a href="{% url 'users:change_password' %}">change your password</a>.</p>
+    
+  </div>
+  <div class = 'profile'>
+  {% for order in orders %}
+  <h2>Order {{ order.id }}</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Product Name</th>
+      <th>Quantity</th>
+      <th>Price</th>
+      <th>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in order.items.all %}
+      <tr>
+        <td>{{ item.product.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.price }}</td>
+        <td>{{ item.get_cost }}</td> <!-- закрытие тега td -->
+      </tr>
+    {% endfor %}
+ 
+</table>
+<p>Total : {{order.get_total_cost}}</p>
+  {% endfor %}
+</div>
+  {% endif %}
+{% endblock %}
