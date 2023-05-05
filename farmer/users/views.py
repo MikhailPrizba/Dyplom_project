@@ -4,6 +4,7 @@ from django.contrib import messages
 from .forms import SellerForm, BuyerForm, BuyerEditForm, SellerEditForm, UserEditForm
 from.models import Seller, Buyer
 from order.models import Order, OrderItem
+from store.models import Product
 
 
 def register_seller(request):
@@ -81,6 +82,9 @@ def profile(request):
     else:
         profile = Buyer.objects.get(user=request.user)
         orders = Order.objects.filter(user=request.user)
-        context = {'profile': profile, 'orders': orders}
+        
+        like = Product.objects.filter(users_like=request.user)
+        print(like)
+        context = {'profile': profile, 'orders': orders,'like': like}
 
-    return render(request, 'users/profile.html', context)
+    return render(request, 'users/profile.html', context, )

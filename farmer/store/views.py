@@ -37,10 +37,24 @@ def product_detail(request: HttpRequest, slug, id, ):
                   'store/products/product_detail.html',
                   {'product': product, 'cart_product_form': cart_product_form, 'comments':comments},
                   )
-
+@login_required
+@require_POST
 def product_like(request):
      
-    return HttpResponse('hhh')
+    product_id = request.POST.get('id')
+    action = request.POST.get('action')
+    if product_id and action:
+        try:
+            product = Product.objects.get(id=product_id)
+            if action == 'like':
+                product.users_like.add(request.user)
+                
+            else:
+                product.users_like.remove(request.user)
+            return JsonResponse({'status': 'ok'})
+        except product.DoesNotExist:
+            pass
+    return JsonResponse({'status': 'error'})
 
 class CommentCreateView(CreateView): #создание комментариев
     model = Comment
