@@ -8,6 +8,9 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from cart.forms import CartAddProductForm
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy,reverse
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
 
 
 def home(request: HttpRequest, category_slug=None):
@@ -35,6 +38,10 @@ def product_detail(request: HttpRequest, slug, id, ):
                   {'product': product, 'cart_product_form': cart_product_form, 'comments':comments},
                   )
 
+def product_like(request):
+     
+    return HttpResponse('hhh')
+
 class CommentCreateView(CreateView): #создание комментариев
     model = Comment
     fields = ['text']
@@ -53,3 +60,4 @@ class CommentDeleteView(DeleteView):
     model = Comment
     def get_success_url(self, **kwargs) -> str:
         return reverse_lazy('store:product_detail', kwargs={'slug':self.object.product.slug, 'id' :self.object.product.id})
+
