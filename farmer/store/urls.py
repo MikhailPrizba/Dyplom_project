@@ -5,6 +5,7 @@ app_name = 'store'
 urlpatterns = [
     path('like/', views.product_like, name='like'),
     path('', views.home, name='home'),
+    path('profile/<int:id>/', views.sellerprofile, name='profile'),
     path('<slug:category_slug>/', views.home, name='product_list_by_category'),
     path('<slug:slug>/<int:id>/', views.product_detail, name='product_detail'),
     

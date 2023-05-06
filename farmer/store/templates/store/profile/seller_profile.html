@@ -1,0 +1,31 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% block content %}
+  <h1>Profile</h1>
+  <p>Username: {{ profile.user.username }}</p>
+
+  <div class = 'profile' >
+  <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}" , >
+
+    <p>Address: {{ profile.address }}</p>
+    <p>Phone number: {{ profile.phone_number }}</p>
+    <a href="{% url 'chat:chat_room' profile.user.id  request.user.id%}">Chat</a>
+  </div>
+  
+    
+
+
+  <div id="main" class="product-list">
+    <p>All seller item</p>
+    {% for product in products %}
+    <div class="item">
+        <a href="{{ product.get_absolute_url }}">
+            <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}">
+        </a>
+        <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+        <br>
+        ${{ product.price }}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -20,7 +20,9 @@
         <input type="submit" value="Add to cart">
     </form>
     {{ product.description|linebreaks }}
+    
 </div>
+<a href="{% url 'store:profile'  product.seller.id %}"> Seller </a>
 <div>
     {% if user.is_authenticated %}
 

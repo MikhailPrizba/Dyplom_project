@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from .models import Product, Category, Comment
+from users.models import Seller
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from cart.forms import CartAddProductForm
 from django.contrib.auth.models import User
@@ -75,3 +76,12 @@ class CommentDeleteView(DeleteView):
     def get_success_url(self, **kwargs) -> str:
         return reverse_lazy('store:product_detail', kwargs={'slug':self.object.product.slug, 'id' :self.object.product.id})
 
+def sellerprofile(request: HttpRequest, id):
+    
+    user = get_object_or_404(User, id=id)
+    
+    profile = user.seller
+    products = user.seller_products.all()
+    return render(request,
+                     'store/profile/seller_profile.html',
+                      {'profile': profile, 'products': products},)
