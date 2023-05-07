@@ -24,7 +24,7 @@ def chat(request, user1_id, user2_id):
 @login_required
 def chat_rooms(request, user1_id):
     user1 = get_object_or_404(User, id=user1_id)
-    if user1.is_staff:
+    if user1.groups.filter(name='Sellers').exists():
         chatrooms = ChatRoom.objects.filter(seller=user1)
     else:
         chatrooms = ChatRoom.objects.filter(buyer=user1)

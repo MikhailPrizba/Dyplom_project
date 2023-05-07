@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from .models import Product, Category, Comment
-from users.models import Seller
+from users.models import Seller, Ratings
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from cart.forms import CartAddProductForm
 from django.contrib.auth.models import User
@@ -85,3 +85,12 @@ def sellerprofile(request: HttpRequest, id):
     return render(request,
                      'store/profile/seller_profile.html',
                       {'profile': profile, 'products': products},)
+
+@login_required
+@require_POST
+def rating(request: HttpRequest):
+    print('aaaa')
+    rating = request.POST.get('rating')
+    print(rating)
+    
+    return JsonResponse({'success': True})

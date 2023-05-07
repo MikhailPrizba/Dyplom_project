@@ -76,15 +76,17 @@ def edit(request):
 @login_required(login_url='users:login')
 def profile(request):
     
-    if request.user.is_staff:
+    if request.user.groups.filter(name='Sellers').exists():
         profile = Seller.objects.get(user=request.user)
-        context = {'profile': profile}
+        products = Product.objects.filter(seller=request.user)
+        context = {'profile': profile, 'products': products}
+        
     else:
         profile = Buyer.objects.get(user=request.user)
         orders = Order.objects.filter(user=request.user)
         
         like = Product.objects.filter(users_like=request.user)
-        print(like)
+        
         context = {'profile': profile, 'orders': orders,'like': like}
 
     return render(request, 'users/profile.html', context, )

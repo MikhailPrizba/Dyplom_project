@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models import Avg
 
 class Seller(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -20,3 +21,16 @@ class Buyer(models.Model):
 
     def __str__(self):
         return self.user.username
+
+class Ratings(models.Model):
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
+    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE)
+    rating = models.IntegerField(default=0, validators=[MaxValueValidator(5), MinValueValidator(0),])
+
+    class Meta:
+        unique_together = (('seller', 'buyer'),)
+    
+    def get_average_rating(self):
+        ratings = Ratings.objects.filter(seller=self.seller, buyer=self.buyer).aggregate(Avg('rating'))
+        return ratings['rating__avg']
+    

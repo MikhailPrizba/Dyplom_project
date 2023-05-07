@@ -10,9 +10,9 @@
     <p>Address: {{ profile.address }}</p>
     <p>Phone number: {{ profile.phone_number }}</p>
     <a href="{% url 'chat:chat_room' profile.user.id  request.user.id%}">Chat</a>
+    
   </div>
   
-    
 
 
   <div id="main" class="product-list">
@@ -28,4 +28,7 @@
     </div>
     {% endfor %}
 </div>
+
 {% endblock %}
+
+

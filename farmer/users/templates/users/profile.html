@@ -3,25 +3,38 @@
 {% block content %}
   <h1>Profile</h1>
   <p>Username: {{ profile.user.username }}</p>
-  {% if user.is_staff %}
+  {% if profile.is_seller %}
   <div class = 'profile' >
   <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}" , >
 
     <p>Address: {{ profile.address }}</p>
     <p>Phone number: {{ profile.phone_number }}</p>
-    <p> <a href="{% url 'chat:list_rooms' request.user.id %}">chat list</a> </p>
+    <p> <a href="{% url 'chat:list_rooms' request.user.id %}"class="button">chat list</a> </p>
   </div>
   
     <a href="{% url 'admin:login' %}" class="button">Work with product</a>
     
     <p>You can <a href="{% url 'users:edit' %}">edit your profile</a>
       or <a href="{% url 'users:change_password' %}">change your password</a>.</p>
+      <div id="main" class="product-list">
+    
+        {% for product in products %}
+        <div class="item">
+            <a href="{{ product.get_absolute_url }}">
+                <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}">
+            </a>
+            <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+            <br>
+            ${{ product.price }}
+        </div>
+        {% endfor %}
+    </div>
   {% else %}
   <div class = 'profile'>
     <p>Phone number: {{ profile.phone_number }}</p>
     <p>You can <a href="{% url 'users:edit' %}">edit your profile</a>
-      or <a href="{% url 'users:change_password' %}">change your password</a>.</p>
-    <p> <a href="{% url 'chat:list_rooms' request.user.id %}">chat list</a> </p>
+      or <a href="{% url 'users:change_password' %}" >change your password</a>.</p>
+    <p> <a href="{% url 'chat:list_rooms' request.user.id %}"class="button">chat list</a> </p>
     
   </div>
   <div class = 'profile'>
