@@ -1,0 +1,15 @@
+{% extends "store/base.html" %}
+{% block title %}Rooms{% endblock %}
+{% block content %}
+{% for  room in chatrooms %}
+    <ul>
+    <li><a href="{% url 'chat:chat_room' room.seller.id room.buyer.id %}">{{ room }}</a></li>
+    {% if request.user.is_staff %}
+    <p>{{room.seller_unread_messages_count}}</p>
+    {% else%}
+    <p>{{room.buyer_unread_messages_count}}</p>
+    {% endif %}
+    
+    </ul>
+{% endfor %}
+{% endblock %}

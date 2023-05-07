@@ -564,7 +564,7 @@ img.user-detail {
     clear:both;
 }
 
-#chat .message .me {
+#chat .message.me {
     display:inline;
     float:right;
     background:#DCEDE0;
