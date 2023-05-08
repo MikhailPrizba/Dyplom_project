@@ -1,73 +1,79 @@
+from typing import Dict, List, Union
+from django.http.request import HttpRequest
 from decimal import Decimal
+from .models import Product
 from django.conf import settings
-from store.models import Product
 
 
 class Cart:
-    def __init__(self, request):
+    def __init__(self, request: HttpRequest) -> None:
         """
-        Initialize the cart.
+        Инициализация корзины..
         """
         self.session = request.session
         cart = self.session.get(settings.CART_SESSION_ID)
         if not cart:
-            # save an empty cart in the session
+            # сохраняем пустую корзину в сессии
             cart = self.session[settings.CART_SESSION_ID] = {}
-        self.cart = cart
+        self.cart: Dict[str, Union[int, str, Product]] = cart
 
-    def __iter__(self):
+    def __iter__(self) -> List[Dict[str, Union[str, Decimal, Product]]]:
+
         """
-        Iterate over the items in the cart and get the products
-        from the database.
+        Итерация по элементам в корзине и получение продуктов из базы данных.
         """
+
         product_ids = self.cart.keys()
-        # get the product objects and add them to the cart
+        # получение объектов продуктов и добавление их в корзину
         products = Product.objects.filter(id__in=product_ids)
         cart = self.cart.copy()
         for product in products:
-            cart[str(product.id)]['product'] = product
+            cart[str(product.id)]["product"] = product
         for item in cart.values():
-            item['price'] = Decimal(item['price'])
-            item['total_price'] = item['price'] * item['quantity']
+            item["price"] = Decimal(item["price"])
+            item["total_price"] = item["price"] * item["quantity"]
             yield item
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
-        Count all items in the cart.
+        Подсчет количества элементов в корзине.
         """
-        return sum(item['quantity'] for item in self.cart.values())
+        return sum(item["quantity"] for item in self.cart.values())
 
-    def add(self, product, quantity=1, override_quantity=False):
+    def add(
+        self, product: Product, quantity: int = 1, override_quantity: bool = False
+    ) -> None:
         """
-        Add a product to the cart or update its quantity.
+        Добавление продукта в корзину или обновление его количества.
         """
         product_id = str(product.id)
         if product_id not in self.cart:
-            self.cart[product_id] = {'quantity': 0,
-                                     'price': str(product.price)}
+            self.cart[product_id] = {"quantity": 0, "price": str(product.price)}
         if override_quantity:
-            self.cart[product_id]['quantity'] = quantity
+            self.cart[product_id]["quantity"] = quantity
         else:
-            self.cart[product_id]['quantity'] += quantity
+            self.cart[product_id]["quantity"] += quantity
         self.save()
 
-    def save(self):
-        # mark the session as "modified" to make sure it gets saved
+    def save(self) -> None:
+        # отметить сессию как "измененную", чтобы убедиться, что она будет сохранена
         self.session.modified = True
 
-    def remove(self, product):
+    def remove(self, product: Product) -> None:
         """
-        Remove a product from the cart.
+        Удаление продукта из корзины.
         """
         product_id = str(product.id)
         if product_id in self.cart:
             del self.cart[product_id]
             self.save()
 
-    def clear(self):
-        # remove cart from session
+    def clear(self) -> None:
+        # удаление корзины из сессии
         del self.session[settings.CART_SESSION_ID]
         self.save()
 
-    def get_total_price(self):
-        return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())
+    def get_total_price(self) -> Decimal:
+        return sum(
+            Decimal(item["price"]) * item["quantity"] for item in self.cart.values()
+        )
