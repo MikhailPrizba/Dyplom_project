@@ -1,6 +1,7 @@
 {% extends 'store/base.html' %}
 {% load static %}
 {% block content %}
+
   <h1>Profile</h1>
   <p>Username: {{ profile.user.username }}</p>
 
@@ -9,11 +10,33 @@
 
     <p>Address: {{ profile.address }}</p>
     <p>Phone number: {{ profile.phone_number }}</p>
-    <a href="{% url 'chat:chat_room' profile.user.id  request.user.id%}">Chat</a>
+    <a href="{% url 'chat:chat_room' profile.user.id  request.user.id %}">Chat</a>
+    
+    {% if not request.user.buyer.ratings_set.all %}
+    {% if not request.user.is_staff%}
+    <ol class="rating-half show-current">
+      <li>1</li>
+      <li>2</li>
+      <li>3</li>
+      <li>4</li>
+      <li>5</li>
+      <li>6</li>
+      <li>7</li>
+      <li>8</li>
+      <li>9</li>
+      <li>10</li>
+      <li class="current"><span></span></li>
+    </ol>
+    {% endif %}
+    {% endif %}
     
   </div>
   
-
+  {% if profile.ratings_set %}
+  <p>Average rating: {{profile.get_average_rating}}/5</p>
+  {% endif %}
+  
+ {{ profile.ratings.get_average_rating}}
 
   <div id="main" class="product-list">
     <p>All seller item</p>
@@ -27,8 +50,39 @@
         ${{ product.price }}
     </div>
     {% endfor %}
-</div>
+ 
+  </div>
+
+
 
 {% endblock %}
+{% block domready%}
 
+var $rating = $('.rating-half');
+ 
+$rating.on('mouseover', function() {
+    $(this).removeClass('show-current');
+}).on('mouseleave', function() {
+    $(this).addClass('show-current');
+});
+ 
 
+$('li', $rating).on('click', function() {
+  var rating = $(this).text();
+  var csrftoken = Cookies.get('csrftoken');
+  $.ajax({
+    type: 'POST',
+    url: '{%url 'store:rating'%}', 
+    headers: { 'X-CSRFToken': csrftoken },
+    data: { rating: rating, seller_id: '{{profile.id}}' }, // передайте значение рейтинга в параметре "rating"
+    success: function(response) {
+      // обработайте успешный ответ от сервера
+      console.log(response);
+    },
+    error: function(error) {
+      // обработайте ошибку
+      console.log(error);
+    }
+  });
+});
+{% endblock%}

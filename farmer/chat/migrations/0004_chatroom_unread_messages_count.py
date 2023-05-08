@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('chat', '0003_remove_chatroom_created_at_remove_chatroom_message_and_more'),
+        ("chat", "0003_remove_chatroom_created_at_remove_chatroom_message_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='chatroom',
-            name='unread_messages_count',
+            model_name="chatroom",
+            name="unread_messages_count",
             field=models.PositiveIntegerField(default=0),
         ),
     ]

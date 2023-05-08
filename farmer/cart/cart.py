@@ -1,8 +1,10 @@
-from typing import Dict, List, Union
-from django.http.request import HttpRequest
 from decimal import Decimal
-from .models import Product
+from typing import Dict, List, Union
+
 from django.conf import settings
+from django.http.request import HttpRequest
+
+from store.models import Product
 
 
 class Cart:
@@ -18,7 +20,6 @@ class Cart:
         self.cart: Dict[str, Union[int, str, Product]] = cart
 
     def __iter__(self) -> List[Dict[str, Union[str, Decimal, Product]]]:
-
         """
         Итерация по элементам в корзине и получение продуктов из базы данных.
         """

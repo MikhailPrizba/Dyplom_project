@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('chat', '0001_initial'),
+        ("chat", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='chatroom',
-            name='message',
+            model_name="chatroom",
+            name="message",
             field=models.TextField(blank=True, null=True),
         ),
     ]

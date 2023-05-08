@@ -35,6 +35,9 @@ input[type="submit"] {
     border: 0;
 }
 
+
+
+
 a.button.light {
     color: #666;
     background: #ededed;
@@ -305,6 +308,7 @@ ul.errorlist {
 
 .product-detail {
     text-align: justify;
+    
 }
 
 .product-detail .price {
@@ -363,63 +367,6 @@ ul.errorlist {
     color: #dc1616;
 }
 
-.languages {
-    float: right;
-    padding-top: 4px;
-    font-size: 14px;
-}
-
-.languages ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    float: left;
-}
-
-.languages ul li {
-    float: left;
-    margin: 0 0 0 10px;
-    font-size: 14px;
-}
-
-.languages p {
-    float: left;
-    margin: 0;
-}
-
-.recommendations {
-    clear: both;
-}
-
-.recommendations div {
-    float: left;
-}
-
-.recommendations img {
-    width: 200px
-}
-
-.recommendations p {
-    clear: both;
-}
-
-.recommendations.cart {
-    width: 60%;
-    float: left;
-    overflow: auto;
-}
-
-.recommendations.cart h3 {
-    margin-top: 0;
-}
-
-.recommendations.cart .item {
-    margin-right: 10px;
-}
-
-.recommendations.cart img {
-    width: 120px;
-}
 
 /* braintree hosted fields */
 form div.field {
@@ -667,5 +614,80 @@ img.user-detail {
     margin-right: 2%;
     padding-left: 0;
     padding-right: 0;
+}
+
+
+.rating-half li {
+    
+    display: block;
+    width: 11px;
+    height: 20px;
+    float: left;
+    
+    text-indent: -9999px;
+    cursor: pointer;
+    background: url("stars.png") no-repeat;
+    
+    
+   
+}
+li.current {
+display: none;
+}
+
+
+ul.show-current{
+position: relative;
+}
+ul.show-current li {
+cursor: default;
+}
+ul.show-current li.current {
+position: absolute;
+top: 0;
+left: 0;
+display: block;
+width: 0;
+background-position: 0 -60px;
+background-repeat: repeat-x;
+}
+ul.show-current li.current:hover,
+ul.show-current li.current:hover ~ li {
+background-position: 0 -60px;
+}
+
+ul.show-current li.current span {
+display: block;
+height: 20px;
+width: 0;
+background: inherit;
+background-position: 0 40px;
+}
+
+/* нечетные элементы */
+li:nth-child(even) {
+background-position: -10px 0;
+}
+
+/* четные при наведении и все предыдущие четные*/
+li:nth-child(odd):hover,
+li:nth-child(odd):hover ~  li:nth-child(odd){
+background-position: 0 -20px;
+}
+
+/* четные при наведении и все предыдущие нечетные*/
+li:nth-child(odd):hover ~  li:nth-child(even){
+background-position: -10px -20px;
+}
+
+/* нечетные при наведении и все предыдущие нечетные*/
+li:nth-child(even):hover,
+li:nth-child(even):hover ~ li:nth-child(even) {
+background-position: -10px -20px;
+}
+
+/* нечетные при наведении и все предыдущие четные*/
+li:nth-child(even):hover ~ li:nth-child(odd) {
+background-position: 0 -20px;
 }
 

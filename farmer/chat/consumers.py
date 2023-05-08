@@ -1,68 +1,72 @@
 import json
-from channels.generic.websocket import AsyncWebsocketConsumer
-from asgiref.sync import async_to_sync, sync_to_async
-from django.utils import timezone
-from django.contrib.auth.models import User
-from .models import ChatMessage, ChatRoom
-from channels.db import database_sync_to_async
 
+from asgiref.sync import async_to_sync, sync_to_async
+from channels.db import database_sync_to_async
+from channels.generic.websocket import AsyncWebsocketConsumer
+from django.contrib.auth.models import User
+from django.utils import timezone
+
+from .models import ChatMessage, ChatRoom
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.user = self.scope['user']
-        self.user1_id = self.scope['url_route']['kwargs']['user1_id']
-        self.user2_id = self.scope['url_route']['kwargs']['user2_id']
-        self.chat_room_name = f'chat_{self.user1_id}_{self.user2_id}'
-        self.room_group_name = 'chat_%s' % self.chat_room_name
-        self.seller = await sync_to_async(User.objects.get)(id=self.user1_id)
-        self.buyer = await sync_to_async(User.objects.get)(id=self.user2_id)
-        self.chat_room = await sync_to_async(ChatRoom.objects.get)(seller=self.seller, buyer=self.buyer)
-        # Join room group
-        await self.channel_layer.group_add(
-            self.room_group_name,
-            self.channel_name
+        # получение пользователей и названия чата
+        self.user: User = self.scope["user"]
+        self.user1_id: str = self.scope["url_route"]["kwargs"]["user1_id"]
+        self.user2_id: str = self.scope["url_route"]["kwargs"]["user2_id"]
+        self.chat_room_name: str = f"chat_{self.user1_id}_{self.user2_id}"
+        self.room_group_name: str = "chat_%s" % self.chat_room_name
+        self.seller: User = await sync_to_async(User.objects.get)(id=self.user1_id)
+        self.buyer: User = await sync_to_async(User.objects.get)(id=self.user2_id)
+        # получение объекта чата и добавление в группу
+        self.chat_room: ChatRoom = await sync_to_async(ChatRoom.objects.get)(
+            seller=self.seller, buyer=self.buyer
         )
+
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
 
         await self.accept()
 
     async def disconnect(self, close_code):
-        # leave room group
-        
-        await database_sync_to_async(self.chat_room.clean_unread_messages_count)(self.user)
-        await self.channel_layer.group_discard(
-            self.room_group_name,
-            self.channel_name
+        # удаление пользователя из группы и сброс непрочитанных сообщений
+
+        await database_sync_to_async(self.chat_room.clean_unread_messages_count)(
+            self.user
+        )
+        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+
+    # обработка получения сообщения
+    async def receive(self, text_data: str):
+        # декодирование полученного текстового сообщения
+        text_data_json: dict = json.loads(text_data)
+        message: str = text_data_json["message"]
+        now: timezone = timezone.now()
+        # получение объекта чата и создание нового сообщения
+        chat_room: ChatRoom = await sync_to_async(ChatRoom.objects.get)(
+            seller=self.seller, buyer=self.buyer
         )
 
-    # receive message from WebSocket
-    async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message = text_data_json['message']
-        now = timezone.now()
-        
-        
-        chat_room = await sync_to_async(ChatRoom.objects.get)(seller=self.seller, buyer=self.buyer)
+        chat_message: ChatMessage = ChatMessage(
+            chat_room=self.chat_room, user=self.user, message=message
+        )
+        # сохранение сообщения и обновление счетчика непрочитанных сообщений
+        await database_sync_to_async(chat_message.save)()
+        await database_sync_to_async(self.chat_room.update_unread_messages_count)(
+            self.user
+        )
 
-        chat_message = ChatMessage(chat_room = self.chat_room, user=self.user ,message=message)
-        
-        await database_sync_to_async(chat_message.save)()    
-        await database_sync_to_async(self.chat_room.update_unread_messages_count)(self.user)
-        
-        # send message to room group
+        # отправка сообщения в группу
         await self.channel_layer.group_send(
             self.room_group_name,
             {
-                'type': 'chat_message',
-                'message': message,
-                'user': self.user.username,
-                'datetime': now.isoformat(),
-            }
+                "type": "chat_message",
+                "message": message,
+                "user": self.user.username,
+                "datetime": now.isoformat(),
+            },
         )
 
-    # receive message from room group
     async def chat_message(self, event):
-        # send message to WebSocket
+        # отправка сообщения в WebSocket
         await self.send(text_data=json.dumps(event))
-    
-

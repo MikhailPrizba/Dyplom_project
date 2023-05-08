@@ -4,25 +4,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('users', '0001_initial'),
+        ("users", "0001_initial"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='seller',
-            old_name='location',
-            new_name='address',
+            model_name="seller",
+            old_name="location",
+            new_name="address",
         ),
         migrations.AddField(
-            model_name='buyer',
-            name='is_buyer',
+            model_name="buyer",
+            name="is_buyer",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='seller',
-            name='is_seller',
+            model_name="seller",
+            name="is_seller",
             field=models.BooleanField(default=True),
         ),
     ]
