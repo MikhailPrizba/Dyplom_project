@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
+from django.db.utils import OperationalError,ProgrammingError
 from store.models import Product
 from users.models import Buyer, Seller
 
@@ -28,11 +29,13 @@ class BuyerAdmin(admin.ModelAdmin):
 Далее добавляем все найденные разрешения в группу "Sellers", чтобы пользователи 
 этой группы могли выполнять действия, связанные с продуктами.
 """
-content_type: ContentType = ContentType.objects.get_for_model(Product)
-seller_permissions: Permission = Permission.objects.filter(
-    content_type=content_type)
+try:
+    content_type: ContentType = ContentType.objects.get_for_model(Product)
+    seller_permissions: Permission = Permission.objects.filter(
+        content_type=content_type)
+    seller_group, created = Group.objects.get_or_create(name="Sellers")
+    buyer_group, created = Group.objects.get_or_create(name="Buyers")
+    seller_group.permissions.add(*seller_permissions)
+except  (OperationalError, ProgrammingError):
+    pass
 
-
-seller_group, created = Group.objects.get_or_create(name="Sellers")
-buyer_group, created = Group.objects.get_or_create(name="Buyers")
-seller_group.permissions.add(*seller_permissions)

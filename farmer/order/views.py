@@ -1,6 +1,7 @@
-from cart.cart import Cart
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
+
+from cart.cart import Cart
 
 from .forms import OrderCreationForm
 from .models import OrderItem

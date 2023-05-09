@@ -5,6 +5,7 @@ from typing import Dict, List, Union
 
 from django.conf import settings
 from django.http.request import HttpRequest
+
 from store.models import Product
 
 
@@ -18,7 +19,7 @@ class Cart:
             cart = self.session[settings.CART_SESSION_ID] = {}
         self.cart: Dict[str, Union[int, str, Product]] = cart
 
-    def __iter__(self) -> List[Dict[str, Union[str, Decimal, Product]]]:
+    def __iter__(self):
         """Итерация по элементам в корзине и получение продуктов из базы
         данных."""
 
@@ -71,3 +72,4 @@ class Cart:
         return sum(
             Decimal(item["price"]) * item["quantity"] for item in self.cart.values()
         )
+    

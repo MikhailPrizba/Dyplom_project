@@ -20,11 +20,11 @@
         <input type="submit" value="Add to cart">
     </form>
     {{ product.description|linebreaks }}
-    <a href="{% url 'store:profile'  product.seller.id %}"> Seller profile</a>
+   <p> <a href="{% url 'store:profile'  product.seller.id %}" class= "button"> Seller profile</a></p>
 </div>
 
 
-
+{% if user.is_authenticated %}
 {% with total_likes=product.users_like.count users_like=product.users_like.all %}
   <div class="image-info">
     <div>
@@ -43,12 +43,14 @@
     </div>
     {% endwith %}
     <div>
+      {% endif %}
       {% if user.is_authenticated %}
   
       <a href="{% url 'store:comment-add' product.slug  product.id %} "class= "button">Add comment</a>
       {%endif%}
   </div>
 <ul class="comment-list">
+  <h3>Comments</h3>
     {% for comment in comments %}
 
     <li class="comment">

@@ -146,14 +146,6 @@ form p input {
     border-radius: 4px;
 }
 
-ul.errorlist {
-    float: left;
-    color: #ff0000;
-    clear: both;
-    font-size: 13px;
-    margin: 0 0 0 10px;
-    padding: 10px 0;
-}
 
 
 #header {
@@ -264,14 +256,17 @@ ul.errorlist {
 }
 
 .comment-list {
-
+    margin-top: 30px;
+    
     margin: 0;
     padding: 0;
+    padding: 30px;
 }
 
 .comment {
+    margin-top: 30px;
     margin-bottom: 20px;
-    padding: 10px;
+    
 
 }
 
@@ -445,7 +440,7 @@ form div.field {
 
 a.like,
 a.follow {
-    float: right;
+    float: left;
     margin-top: -8px;
 }
 

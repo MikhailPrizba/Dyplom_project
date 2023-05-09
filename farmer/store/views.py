@@ -12,16 +12,16 @@
      rating: вид для оценки продавца.
 """
 
-from cart.forms import CartAddProductForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import (HttpRequest, HttpResponse, HttpResponseRedirect,
-                         JsonResponse)
+from django.http import (HttpRequest, HttpResponse, JsonResponse)
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.decorators.http import require_POST
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
+
+from cart.forms import CartAddProductForm
 from users.models import Buyer, Ratings, Seller
 
 from .models import Category, Comment, Product

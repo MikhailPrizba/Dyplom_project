@@ -13,10 +13,11 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 
-from order.models import Order, OrderItem
+from order.models import Order
 from store.models import Product
 
-from .forms import BuyerEditForm, BuyerForm, SellerEditForm, SellerForm, UserEditForm
+from .forms import (BuyerEditForm, BuyerForm, SellerEditForm, SellerForm,
+                    UserEditForm)
 from .models import Buyer, Seller
 
 
