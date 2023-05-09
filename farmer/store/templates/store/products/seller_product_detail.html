@@ -1,0 +1,51 @@
+{% extends "store/base.html" %}
+{% load static %}
+{% block title %}
+{{ product.name }}
+{% endblock %}
+{% block content %}
+<div class="product-detail">
+    <img src="{% if product.image %}{{ product.image.url }}{% else %}
+ {% static "img/no_image.png" %}{% endif %}">
+    <h1>{{ product.name }}</h1>
+    <h2>
+        <a href="{{ product.category.get_absolute_url }}">
+            {{ product.category }}
+        </a>
+    </h2>
+    <p class="price">${{ product.price }}</p>
+   
+    {{ product.description|linebreaks }}
+  <br>
+  <br>
+  <br>
+</div>
+
+
+
+
+   
+ 
+<ul class="comment-list">
+    {% for comment in comments %}
+
+    <li class="comment">
+        <h4>{{ comment.user.username }}</h4>
+        <p>{{ comment.text }}</p>
+        <div class="meta">{{ comment.created_at|date }}</div>
+   
+    {% if user.username == comment.user.username%}
+    <a href="{% url 'store:comment-delete' comment.id %}">Delete comment</a>
+    <a href="{% url 'store:comment-update' comment.id %}">Edit comment</a>
+    {%endif%}
+    {% empty %}
+</li>
+    <li>No comments yet.</li>
+    {% endfor %}
+</ul>
+
+
+{% endblock %}
+{% block domready %}
+ 
+{% endblock %}

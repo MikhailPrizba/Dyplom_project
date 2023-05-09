@@ -1,0 +1,100 @@
+{% extends "store/base.html" %}
+
+{% block title %}Chat room {% endblock %}
+{% block header %}{% endblock %}
+{% block content %}
+  <div id="chat">
+    {% for message in messages %}
+    
+      {% if message.user == request.user %}
+      <div class="message me">
+        <strong>Me</strong>:
+        <span>{{ message.message }}</span>
+        <span class="date">{{ message.created_at }}</span>
+      </div>
+      {% else %}
+      <div class="message">
+        <strong>{{message.user.username}}</strong>:
+        <span>{{ message.message }}</span>
+        <span class="date">{{ message.created_at }}</span>
+      </div>
+      {% endif%}
+    
+    {% endfor %}
+  </div>
+  <div id="chat-input">
+    <input id="chat-message-input" type="text">
+    <input id="chat-message-submit" type="submit" value="Send">
+  </div>
+{% endblock %}
+
+
+
+{% block include_js %}
+  {{ user1.id|json_script:"user-1" }}
+  {{ user2.id|json_script:"user-2" }}
+  {{ request.user.username|json_script:"request-user" }}
+{% endblock %}
+
+{% block domready %}
+  const user1_Id = JSON.parse(
+    document.getElementById('user-1').textContent
+  );
+  const user2_Id = JSON.parse(
+    document.getElementById('user-2').textContent
+  );
+  const requestUser = JSON.parse(
+    document.getElementById('request-user').textContent
+  );
+  const url = 'ws://' + window.location.host +
+            '/ws/chat/' + user1_Id + '/' + user2_Id + '/';
+  const chatSocket = new WebSocket(url);
+
+  chatSocket.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    const chat = document.getElementById('chat');
+
+    const dateOptions = {hour: 'numeric', minute: 'numeric', hour12: true};
+    const datetime = new Date(data.datetime).toLocaleString('en', dateOptions);
+    const isMe = data.user === requestUser;
+    const source = isMe ? 'me' : 'other';
+    const name = isMe ? 'Me' : data.user;
+
+    chat.innerHTML += '<div class="message ' + source + '">' +
+                      '<strong>' + name + '</strong> ' +
+                      '<span class="date">' + datetime + '</span><br>' +
+                      data.message + '</div>';
+    chat.scrollTop = chat.scrollHeight;
+  };
+
+  chatSocket.onclose = function(event) {
+    console.error('Chat socket closed unexpectedly');
+  };
+
+  const input = document.getElementById('chat-message-input');
+  const submitButton = document.getElementById('chat-message-submit');
+
+
+
+  submitButton.addEventListener('click', function(event) {
+    const message = input.value;
+    if(message) {
+      // send message in JSON format
+      chatSocket.send(JSON.stringify({'message': message}));
+      // clear input
+      input.value = '';
+      input.focus();
+    }
+  });
+
+  input.addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+      // cancel the default action, if needed
+      event.preventDefault();
+      // trigger click event on button
+      submitButton.click();
+    }
+  });
+
+  input.focus();
+{% endblock %}

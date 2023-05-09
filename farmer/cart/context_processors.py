@@ -1,5 +1,9 @@
+"""добавляет объект Cart в контекст запроса"""
+from django.http import HttpRequest
+
 from .cart import Cart
 
 
-def cart(request):
-    return {'cart': Cart(request)}
+def cart(request: HttpRequest) -> dict[str, Cart]:
+    """добавляет объект Cart в контекст запроса для доступа ко всем шаблонам."""
+    return {"cart": Cart(request)}

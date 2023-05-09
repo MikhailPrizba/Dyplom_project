@@ -3,6 +3,15 @@
 {% block title %}
 {% if category %}{{ category.name }}{% else %}Products{% endif %}
 {% endblock %}
+{%block search%}
+<div class = 'search'>
+<form action="{% url 'store:search' %}" method="get">
+    <input type="text", type="search", name="q", placeholder="search">
+    <button type="submit">Найти</button>    
+</form>
+</div>
+{%endblock%}
+
 {% block content %}
 <div id="sidebar">
     <h3>Categories</h3>
