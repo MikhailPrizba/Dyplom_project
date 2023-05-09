@@ -57,6 +57,7 @@ class SellerForm(UserCreationForm):
             phone_number=self.cleaned_data["phone_number"],
         )
         # создаем объект Seller и привязываем его к пользователю
+        
         if commit:
             seller.save()
         return user

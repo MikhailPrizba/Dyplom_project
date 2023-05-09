@@ -5,7 +5,7 @@
   <p>Username: {{ profile.user.username }}</p>
   {% if profile.is_seller %}
   <div class = 'profile' >
-  <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}" , >
+  <img src="{% if profile.photo %}{{ profile.photo.url }}{% else %}{% static "img/no_image.png" %}{% endif %}" , >
 
     <p>Address: {{ profile.address }}</p>
     <p>Phone number: {{ profile.phone_number }}</p>

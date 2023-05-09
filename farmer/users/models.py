@@ -17,7 +17,7 @@ class Seller(models.Model):
     user: models.OneToOneField[User] = models.OneToOneField(
         User, on_delete=models.CASCADE
     )
-    photo: models.ImageField = models.ImageField(upload_to="sellers/", blank=True)
+    photo: models.ImageField = models.ImageField(upload_to="images/seller_photos/", blank=True)
     address: models.CharField = models.CharField(max_length=100, blank=True)
     phone_number: models.CharField = models.CharField(max_length=20, blank=True)
     is_seller: models.BooleanField = models.BooleanField(default=True)
