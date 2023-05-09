@@ -22,11 +22,11 @@
     python3 -m venv .venv
     source .venv/bin/activate
     ```
-3.Подключение базы данных
-   
+3. Подключение базы данных:
+    ```
     в settings.py DATABASES подключите вашу базу данных
     (Name,USER,PASSWORD)
-    
+    ```
 
 4. Установка библиотек выполнение миграций миграций:
 
