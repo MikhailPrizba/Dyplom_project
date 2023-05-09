@@ -1,3 +1,13 @@
+"""Этот модуль предоставляет функциональные возможности, связанные с
+регистрацией пользователей, профилем и редактированием.
+
+Функции:
+
+    register_seller регистрация продавца
+    register_buyer регистрация покупателя
+    edit редактирование профиля
+    profile отображение профиля пользователя
+"""
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
@@ -11,6 +21,7 @@ from .models import Buyer, Seller
 
 
 def register_seller(request: HttpRequest) -> HttpResponse:
+    """Регистрация продавца."""
     if request.method == "POST":
         form = SellerForm(request.POST)
         if form.is_valid():
@@ -24,6 +35,7 @@ def register_seller(request: HttpRequest) -> HttpResponse:
 
 
 def register_buyer(request: HttpRequest) -> HttpResponse:
+    """Регистрация покупателя."""
     if request.method == "POST":
         form = BuyerForm(request.POST)
         if form.is_valid():
@@ -36,8 +48,9 @@ def register_buyer(request: HttpRequest) -> HttpResponse:
     return render(request, "users/registration/register_buyer.html", {"form": form})
 
 
-@login_required
+@login_required(login_url="users:login")
 def edit(request: HttpRequest) -> HttpResponse:
+    """Редактирование профиля."""
     if request.method == "POST":
         user_form = UserEditForm(instance=request.user, data=request.POST)
         if request.user.is_staff:
@@ -69,6 +82,7 @@ def edit(request: HttpRequest) -> HttpResponse:
 
 @login_required(login_url="users:login")
 def profile(request: HttpRequest) -> HttpResponse:
+    """Профиль пользователя."""
     if request.user.groups.filter(name="Sellers").exists():
         profile = Seller.objects.get(user=request.user)
         products = Product.objects.filter(seller=request.user)

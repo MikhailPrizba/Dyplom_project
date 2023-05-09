@@ -1,17 +1,16 @@
+"""Реализация корзины.."""
+
 from decimal import Decimal
 from typing import Dict, List, Union
 
 from django.conf import settings
 from django.http.request import HttpRequest
-
 from store.models import Product
 
 
 class Cart:
     def __init__(self, request: HttpRequest) -> None:
-        """
-        Инициализация корзины..
-        """
+        """Инициализация корзины.."""
         self.session = request.session
         cart = self.session.get(settings.CART_SESSION_ID)
         if not cart:
@@ -20,9 +19,8 @@ class Cart:
         self.cart: Dict[str, Union[int, str, Product]] = cart
 
     def __iter__(self) -> List[Dict[str, Union[str, Decimal, Product]]]:
-        """
-        Итерация по элементам в корзине и получение продуктов из базы данных.
-        """
+        """Итерация по элементам в корзине и получение продуктов из базы
+        данных."""
 
         product_ids = self.cart.keys()
         # получение объектов продуктов и добавление их в корзину
@@ -36,20 +34,17 @@ class Cart:
             yield item
 
     def __len__(self) -> int:
-        """
-        Подсчет количества элементов в корзине.
-        """
+        """Подсчет количества элементов в корзине."""
         return sum(item["quantity"] for item in self.cart.values())
 
     def add(
         self, product: Product, quantity: int = 1, override_quantity: bool = False
     ) -> None:
-        """
-        Добавление продукта в корзину или обновление его количества.
-        """
+        """Добавление продукта в корзину или обновление его количества."""
         product_id = str(product.id)
         if product_id not in self.cart:
-            self.cart[product_id] = {"quantity": 0, "price": str(product.price)}
+            self.cart[product_id] = {
+                "quantity": 0, "price": str(product.price)}
         if override_quantity:
             self.cart[product_id]["quantity"] = quantity
         else:
@@ -61,9 +56,7 @@ class Cart:
         self.session.modified = True
 
     def remove(self, product: Product) -> None:
-        """
-        Удаление продукта из корзины.
-        """
+        """Удаление продукта из корзины."""
         product_id = str(product.id)
         if product_id in self.cart:
             del self.cart[product_id]

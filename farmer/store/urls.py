@@ -6,7 +6,7 @@ app_name = "store"
 urlpatterns = [
     path("like/", views.product_like, name="like"),
     path("rating/", views.rating, name="rating"),
-    path('search/', views.Search.as_view(), name='search'),
+    path("search/", views.Search.as_view(), name="search"),
     path("", views.home, name="home"),
     path("profile/<int:id>/", views.sellerprofile, name="profile"),
     path("<slug:category_slug>/", views.home, name="product_list_by_category"),
@@ -26,5 +26,4 @@ urlpatterns = [
         views.CommentDeleteView.as_view(),
         name="comment-delete",
     ),
-    
 ]

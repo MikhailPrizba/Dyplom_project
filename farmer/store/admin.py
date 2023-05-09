@@ -9,7 +9,7 @@ from .models import Category, Product
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    """Регистрация категорий  в админке"""
+    """Регистрация категорий  в админке."""
 
     list_display = ("name", "slug")
     prepopulated_fields = {"slug": ("name",)}
@@ -17,7 +17,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    """Регистрация товара в админке"""
+    """Регистрация товара в админке."""
 
     list_display = ["name", "description", "price", "seller"]
     list_filter = ["seller"]
@@ -35,7 +35,10 @@ class ProductAdmin(admin.ModelAdmin):
     def save_model(
         self, request: HttpRequest, obj: Product, form, change: bool
     ) -> None:
-        """Сохраняет объект в базу данных. Если это новый объект"""
+        """Сохраняет объект в базу данных.
+
+        Если это новый объект
+        """
         if not change:
             obj.seller = request.user
         super().save_model(request, obj, form, change)

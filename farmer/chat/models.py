@@ -1,8 +1,14 @@
+"""
+Модуль содержит два класса: ChatRoom и ChatMessage.
+Оба класса отвечают за моделирование данных, используемых в чат-приложении
+"""
 from django.contrib.auth.models import User
 from django.db import models
 
 
 class ChatRoom(models.Model):
+    """моделирует комнату чата между двумя пользователями"""
+
     buyer = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="buyer_chat_rooms"
     )
@@ -16,6 +22,7 @@ class ChatRoom(models.Model):
         return f"{self.buyer.username}'s chat with {self.seller.username}"
 
     def update_unread_messages_count(self, user):
+        """обновление счетчика непрочитанных сообщений"""
         if self.buyer == user:
             self.seller_unread_messages_count += 1
         elif self.seller == user:
@@ -23,6 +30,7 @@ class ChatRoom(models.Model):
         self.save()
 
     def clean_unread_messages_count(self, user):
+        """сбрасывание счетчика непрочитанных сообщений"""
         if self.seller == user:
             self.seller_unread_messages_count = 0
         elif self.buyer == user:
@@ -31,6 +39,8 @@ class ChatRoom(models.Model):
 
 
 class ChatMessage(models.Model):
+    """моделирует сообщения, отправляемые в чате"""
+
     chat_room = models.ForeignKey(
         ChatRoom, on_delete=models.CASCADE, related_name="chat_messages"
     )

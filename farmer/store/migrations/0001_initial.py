@@ -83,14 +83,17 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="category",
-            index=models.Index(fields=["name"], name="store_categ_name_1278fd_idx"),
+            index=models.Index(
+                fields=["name"], name="store_categ_name_1278fd_idx"),
         ),
         migrations.AddIndex(
             model_name="product",
-            index=models.Index(fields=["name"], name="store_produ_name_5e57da_idx"),
+            index=models.Index(
+                fields=["name"], name="store_produ_name_5e57da_idx"),
         ),
         migrations.AddIndex(
             model_name="product",
-            index=models.Index(fields=["id", "slug"], name="store_produ_id_2abda1_idx"),
+            index=models.Index(fields=["id", "slug"],
+                               name="store_produ_id_2abda1_idx"),
         ),
     ]

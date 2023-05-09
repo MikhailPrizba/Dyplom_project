@@ -1,3 +1,13 @@
+"""В модуле определен класс ChatConsumer, который наследуется от
+AsyncWebsocketConsumer.
+
+Модуль импортирует необходимые библиотеки и классы: json,
+asgiref.sync.async_to_sync, asgiref.sync.sync_to_async,
+database_sync_to_async, AsyncWebsocketConsumer, User, timezone,
+ChatMessage, ChatRoom. В классе ChatConsumer определены четыре метода:
+connect, disconnect, receive, chat_message.
+"""
+
 import json
 
 from asgiref.sync import async_to_sync, sync_to_async
@@ -10,8 +20,11 @@ from .models import ChatMessage, ChatRoom
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
+    """Класс ChatConsumer реализует WebSocket для обработки чата между двумя
+    пользователями."""
+
     async def connect(self):
-        # получение пользователей и названия чата
+        """Получение пользователей и названия чата."""
         self.user: User = self.scope["user"]
         self.user1_id: str = self.scope["url_route"]["kwargs"]["user1_id"]
         self.user2_id: str = self.scope["url_route"]["kwargs"]["user2_id"]
@@ -29,15 +42,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        # удаление пользователя из группы и сброс непрочитанных сообщений
+        """Удаление пользователя из группы и сброс непрочитанных сообщений."""
 
         await database_sync_to_async(self.chat_room.clean_unread_messages_count)(
             self.user
         )
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
-    # обработка получения сообщения
     async def receive(self, text_data: str):
+        """Обработка получения сообщения."""
         # декодирование полученного текстового сообщения
         text_data_json: dict = json.loads(text_data)
         message: str = text_data_json["message"]
@@ -68,5 +81,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
     async def chat_message(self, event):
-        # отправка сообщения в WebSocket
+        """Отправка сообщения в WebSocket."""
         await self.send(text_data=json.dumps(event))

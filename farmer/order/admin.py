@@ -4,12 +4,16 @@ from .models import Order, OrderItem
 
 
 class OrderItemInline(admin.TabularInline):
+    """Класс для создания встроенной админки для модели OrderItem."""
+
     model = OrderItem
     raw_id_fields = ["product"]
 
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
+    """Класс для создания админки для модели Order."""
+
     list_display = [
         "id",
         "user",

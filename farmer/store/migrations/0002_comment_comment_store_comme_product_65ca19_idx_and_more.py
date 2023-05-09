@@ -54,11 +54,13 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="comment",
-            index=models.Index(fields=["user"], name="store_comme_user_id_788131_idx"),
+            index=models.Index(
+                fields=["user"], name="store_comme_user_id_788131_idx"),
         ),
         migrations.AddIndex(
             model_name="comment",
-            index=models.Index(fields=["active"], name="store_comme_active_b586b8_idx"),
+            index=models.Index(fields=["active"],
+                               name="store_comme_active_b586b8_idx"),
         ),
         migrations.AddIndex(
             model_name="comment",

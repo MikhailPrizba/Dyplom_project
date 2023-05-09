@@ -691,3 +691,37 @@ li:nth-child(even):hover ~ li:nth-child(odd) {
 background-position: 0 -20px;
 }
 
+.search{
+    float:right; 
+    margin-top:10px;
+}
+.search input{
+    float:right;
+    width: 300px;
+    font-size: 13px;
+    
+    padding: 10px 12px;
+    border: 0;
+    background: #efefef;
+    color: #666;
+    border-radius: 4px;
+    
+    
+}
+.search form{
+    float:right;
+}
+.search button{
+    display: block; /* Добавляем свойство display со значением block, чтобы элемент стал блочным и занимал всю ширину */
+     /* Добавляем отступ сверху */
+    clear: both; /* Добавляем свойство clear со значением both, чтобы убрать "плавающие" элементы слева и справа */
+    float: right;
+    color: #fff;
+    background: #5993bb;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 14px;
+    border: 0;
+    
+    
+}

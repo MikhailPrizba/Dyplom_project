@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
-
 from store.models import Product
 from users.models import Buyer, Seller
 
@@ -9,15 +8,17 @@ from users.models import Buyer, Seller
 
 
 @admin.register(Seller)
-# Регистрация продавца в администраторе
 class SellerAdmin(admin.ModelAdmin):
+    """Регистрация продавца в администраторе."""
+
     list_display: tuple = ("user", "phone_number", "address")
     list_filter: tuple = ("user", "phone_number", "address")
 
 
 @admin.register(Buyer)
-# Регистрация покупателя в администраторе
 class BuyerAdmin(admin.ModelAdmin):
+    """Регистрация покупателя в администраторе."""
+
     list_display: tuple = ("user", "phone_number")
 
 
@@ -28,7 +29,8 @@ class BuyerAdmin(admin.ModelAdmin):
 этой группы могли выполнять действия, связанные с продуктами.
 """
 content_type: ContentType = ContentType.objects.get_for_model(Product)
-seller_permissions: Permission = Permission.objects.filter(content_type=content_type)
+seller_permissions: Permission = Permission.objects.filter(
+    content_type=content_type)
 
 
 seller_group, created = Group.objects.get_or_create(name="Sellers")

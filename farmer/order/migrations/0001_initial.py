@@ -82,7 +82,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="order",
-            index=models.Index(fields=["user"], name="order_order_user_id_a7f1ea_idx"),
+            index=models.Index(
+                fields=["user"], name="order_order_user_id_a7f1ea_idx"),
         ),
         migrations.AddIndex(
             model_name="order",

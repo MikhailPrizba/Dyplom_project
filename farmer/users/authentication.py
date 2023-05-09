@@ -5,11 +5,17 @@ from django.http import HttpRequest
 
 
 class EmailAuthBackend:
-    """ """
+    """Аутентификационный backend, который позволяет пользователям войти в
+    систему с помощью их электронной почты и пароля."""
 
     def authenticate(
         self, request: HttpRequest, username: str = None, password: str = None
     ) -> Union[User, None]:
+        """Аутентификация пользователя по электронной почте и паролю.
+
+        Возвращает пользователя, если электронная почта и пароль
+        совпадают, в противном случае возвращает None.
+        """
         try:
             user = User.objects.get(email=username)
             if user.check_password(password):
@@ -19,6 +25,7 @@ class EmailAuthBackend:
             return None
 
     def get_user(self, user_id: int) -> Union[User, None]:
+        """Возвращает пользователя по его идентификатору."""
         try:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:

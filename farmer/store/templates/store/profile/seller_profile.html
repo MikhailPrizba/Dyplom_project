@@ -12,8 +12,9 @@
     <p>Phone number: {{ profile.phone_number }}</p>
     <a href="{% url 'chat:chat_room' profile.user.id  request.user.id %}">Chat</a>
     
+    
+    {% if not request.user.is_staff %}
     {% if not request.user.buyer.ratings_set.all %}
-    {% if not request.user.is_staff%}
     <ol class="rating-half show-current">
       <li>1</li>
       <li>2</li>
@@ -78,6 +79,8 @@ $('li', $rating).on('click', function() {
     success: function(response) {
       // обработайте успешный ответ от сервера
       console.log(response);
+      location.reload();
+
     },
     error: function(error) {
       // обработайте ошибку

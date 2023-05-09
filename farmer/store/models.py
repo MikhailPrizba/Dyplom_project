@@ -6,6 +6,8 @@ from django.urls import reverse
 
 
 class Category(models.Model):
+    """Категория товара."""
+
     name: str = models.CharField(max_length=100)
     slug: str = models.SlugField(max_length=100, unique=True)
 
@@ -18,6 +20,8 @@ class Category(models.Model):
         ]
 
     def get_absolute_url(self) -> str:
+        """Метод для получения URL страницы списка товаров, относящихся к
+        данной категории."""
         return reverse("store:product_list_by_category", args=[self.slug])
 
     def __str__(self) -> str:
@@ -25,6 +29,8 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    """Товар в магазине."""
+
     category: Category = models.ForeignKey(Category, on_delete=models.CASCADE)
     seller: User = models.ForeignKey(
         User,
@@ -57,15 +63,23 @@ class Product(models.Model):
         ]
 
     def save(self, *args, **kwargs) -> None:
-        if not self.pk:  # если это новый объект
+        """Переопределение метода сохранения объекта.
+
+        Если это новый объект, то устанавливает продавца товара из
+        переданных параметров или текущего пользователя.
+        """
+        if not self.pk:
             self.seller = (
-                self.seller or kwargs.pop("seller", None) or User.objects.get(pk=1)
+                self.seller or kwargs.pop(
+                    "seller", None) or User.objects.get(pk=1)
             )
             # попытаться установить `seller` из self.seller или из переданных kwargs
             # если не установлено, установить текущего пользователя, который создал продукт
             super().save(*args, **kwargs)
 
     def get_absolute_url(self) -> str:
+        """Метод для получения URL страницы с подробной информацией о
+        товаре."""
         return reverse("store:product_detail", args=[self.slug, self.id])
 
     def __str__(self) -> str:
@@ -73,6 +87,8 @@ class Product(models.Model):
 
 
 class Comment(models.Model):
+    """Комментарий к товару."""
+
     product: Product = models.ForeignKey(Product, on_delete=models.CASCADE)
     user: User = models.ForeignKey(User, on_delete=models.CASCADE)
     text: str = models.TextField(max_length=200)
@@ -90,6 +106,8 @@ class Comment(models.Model):
         ]
 
     def get_absolute_url(self) -> str:
+        """Метод для получения URL страницы с подробной информацией о
+        товаре."""
         return reverse(
             "store:product_detail", args=[self.product.slug, self.product.id]
         )

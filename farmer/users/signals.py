@@ -5,11 +5,13 @@ from django.dispatch import receiver
 
 @receiver(post_save, sender=User)
 def assign_group(sender: object, instance: User, created: bool, **kwargs: dict) -> None:
-    """
-    Функция assign_group назначает новому пользователю определенную группу (Group)
-    в зависимости от значения атрибутов is_seller и is_buyer. Если is_seller равен True,
-    пользователю назначается группа "Sellers", а также ему присваиваются права доступа,
-    связанные с этой группой. Если is_buyer равен True, пользователю назначается группа "Buyers".
+    """Функция assign_group назначает новому пользователю определенную группу
+    (Group) в зависимости от значения атрибутов is_seller и is_buyer.
+
+    Если is_seller равен True, пользователю назначается группа
+    "Sellers", а также ему присваиваются права доступа, связанные с этой
+    группой. Если is_buyer равен True, пользователю назначается группа
+    "Buyers".
     """
     if created:
         if hasattr(instance, "is_seller") and instance.is_seller:

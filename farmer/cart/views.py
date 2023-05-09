@@ -1,9 +1,11 @@
+"""Данный модуль содержит представления для обработки запросов, связанных с
+корзиной покупок."""
+
 from typing import Any, Dict, Union
 
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
-
 from store.models import Product
 
 from .cart import Cart
@@ -12,9 +14,7 @@ from .forms import CartAddProductForm
 
 @require_POST
 def cart_add(request: HttpRequest, product_id: int) -> HttpResponse:
-    """
-    Обработчик добавления товара в корзину.
-    """
+    """Обработчик добавления товара в корзину."""
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
     form = CartAddProductForm(request.POST)
@@ -28,9 +28,7 @@ def cart_add(request: HttpRequest, product_id: int) -> HttpResponse:
 
 @require_POST
 def cart_remove(request: HttpRequest, product_id: int) -> HttpResponse:
-    """
-    Обработчик удаления товара из корзины.
-    """
+    """Обработчик удаления товара из корзины."""
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
     cart.remove(product)
@@ -38,9 +36,7 @@ def cart_remove(request: HttpRequest, product_id: int) -> HttpResponse:
 
 
 def cart_detail(request: HttpRequest) -> HttpResponse:
-    """
-    Обработчик отображения содержимого корзины.
-    """
+    """Обработчик отображения содержимого корзины."""
     cart = Cart(request)
     for item in cart:
         item["update_quantity_form"] = CartAddProductForm(

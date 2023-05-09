@@ -1,3 +1,11 @@
+"""Модуль содержит модели Django для создания профилей продавца и покупателя, а
+также модель для хранения рейтинга пользователя.
+
+Классы:
+- Seller: модель профиля продавца.
+- Buyer: модель покупателя.
+- Ratings: модель рейтинга пользователя.
+"""
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -5,6 +13,7 @@ from django.db.models import Avg
 
 
 class Seller(models.Model):
+    """Модель профиля продавца."""
     user: models.OneToOneField[User] = models.OneToOneField(
         User, on_delete=models.CASCADE
     )
@@ -17,6 +26,7 @@ class Seller(models.Model):
         return self.user.username
     
     def get_average_rating(self) -> float:
+        """Возвращает среднюю оценку продавца."""
         ratings = Ratings.objects.filter(
             seller=self).aggregate(Avg("rating"))
         return round((ratings["rating__avg"]/2), 1)
@@ -24,6 +34,7 @@ class Seller(models.Model):
 
 
 class Buyer(models.Model):
+    """Модель профиля покупателя."""
     user: models.OneToOneField[User] = models.OneToOneField(
         User, on_delete=models.CASCADE
     )
@@ -35,6 +46,7 @@ class Buyer(models.Model):
 
 
 class Ratings(models.Model):
+    """Модель рейтинга пользователя."""
     seller: models.ForeignKey[Seller] = models.ForeignKey(
         Seller, on_delete=models.CASCADE
     )
@@ -47,5 +59,7 @@ class Ratings(models.Model):
         ],
     )
 
-    
+    class Meta:
+        unique_together = (("seller", "buyer"),)
+
 
