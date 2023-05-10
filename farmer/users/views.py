@@ -24,7 +24,7 @@ from .models import Buyer, Seller
 def register_seller(request: HttpRequest) -> HttpResponse:
     """Регистрация продавца."""
     if request.method == "POST":
-        form = SellerForm(request.POST)
+        form = SellerForm(request.POST, files = request.FILES)
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get("username")
@@ -38,7 +38,7 @@ def register_seller(request: HttpRequest) -> HttpResponse:
 def register_buyer(request: HttpRequest) -> HttpResponse:
     """Регистрация покупателя."""
     if request.method == "POST":
-        form = BuyerForm(request.POST)
+        form = BuyerForm(request.POST, files = request.FILES)
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get("username")

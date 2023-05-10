@@ -2,6 +2,8 @@ from typing import Union
 
 from django.contrib.auth.models import User
 from django.http import HttpRequest
+import requests
+from django.core.exceptions import ValidationError
 
 
 class EmailAuthBackend:
@@ -30,3 +32,27 @@ class EmailAuthBackend:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
+
+
+
+
+
+
+
+
+
+
+
+def is_real_address(address: str) -> bool:
+    url = 'https://nominatim.openstreetmap.org/search/'
+    params = {
+        'q': address,
+        'format': 'json',
+    }
+    response = requests.get(url, params=params)
+    data = response.json()
+    print(data)
+    if not data:
+        return False
+
+    return True

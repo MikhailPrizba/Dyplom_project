@@ -15,15 +15,21 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 from .models import Buyer, Seller
-
+from .authentication import is_real_address
 
 class SellerForm(UserCreationForm):
     """Форма для регистрации продавца."""
 
     photo: forms.ImageField = forms.ImageField(required=False)
-    address: forms.CharField = forms.CharField(max_length=100, required=True)
+    country: forms.CharField = forms.CharField(max_length=100, required=True)
     phone_number: forms.CharField = forms.CharField(
         max_length=20, required=True)
+    city: forms.CharField = forms.CharField(max_length=100, required=True)
+    
+    address: forms.CharField = forms.CharField(max_length=100, required=True)
+    house_number : forms.CharField = forms.CharField(max_length=100, required=True)
+    
+
 
     class Meta(UserCreationForm.Meta):
         model: type = User
@@ -44,6 +50,23 @@ class SellerForm(UserCreationForm):
         if User.objects.filter(email=data).exists():
             raise forms.ValidationError("Email already in use.")
         return data
+    
+    
+    
+    
+    def clean_house_number(self) -> str:
+        print(self.cleaned_data)
+        address = self.cleaned_data["address"]
+        city = self.cleaned_data["city"]
+        house_number = self.cleaned_data["house_number"]
+        country = self.cleaned_data["country"]
+        
+        address_all = f" {house_number}/{address} {city} {country}  "
+        print(address_all)
+        
+        if not is_real_address(address_all):
+            raise forms.ValidationError("Введите реальный адрес.")
+        return address_all
 
     def save(self, commit: bool = True) -> User:
         """Создает объект Seller и привязывает его."""
@@ -53,9 +76,15 @@ class SellerForm(UserCreationForm):
         seller: Seller = Seller.objects.create(
             user=user,
             photo=self.cleaned_data["photo"],
+            country=self.cleaned_data["country"],
+            city=self.cleaned_data["city"],
             address=self.cleaned_data["address"],
+            house_number=self.cleaned_data["house_number"],
+            
             phone_number=self.cleaned_data["phone_number"],
         )
+
+        
         # создаем объект Seller и привязываем его к пользователю
         
         if commit:
@@ -119,4 +148,4 @@ class SellerEditForm(forms.ModelForm):
 
     class Meta:
         model: type = Seller
-        fields: list[str] = ["photo", "address", "phone_number"]
+        fields: list[str] = ["photo", "address","city","house_number", "country", "phone_number"]

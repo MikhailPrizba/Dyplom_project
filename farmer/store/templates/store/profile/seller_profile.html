@@ -6,7 +6,7 @@
   <p>Username: {{ profile.user.username }}</p>
 
   <div class = 'profile' >
-  <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}" , >
+  <img src="{% if profile.photo %}{{ profile.photo.url }}{% else %}{% static "img/no_image.png" %}{% endif %}" >
 
     <p>Address: {{ profile.address }}</p>
     <p>Phone number: {{ profile.phone_number }}</p>
@@ -14,7 +14,7 @@
     
     
     {% if not request.user.is_staff %}
-    {% if not request.user.buyer.ratings_set.all %}
+    {% if not rating %}
     <ol class="rating-half show-current">
       <li>1</li>
       <li>2</li>
@@ -33,11 +33,11 @@
     
   </div>
   
-  {% if profile.ratings_set %}
+  {% if profile.ratings_set.all %}
   <p>Average rating: {{profile.get_average_rating}}/5</p>
   {% endif %}
   
- {{ profile.ratings.get_average_rating}}
+ <div id="map" style="width: 400px; height: 400px;"></div>
 
   <div id="main" class="product-list">
     <p>All seller item</p>
@@ -57,6 +57,25 @@
 
 
 {% endblock %}
+{% block include_js %}
+<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=ac3d3b59-e1ea-46d7-9db7-aab1890f2ec6"></script>
+  <script>
+    ymaps.ready(init);
+
+    function init() {
+        var myMap = new ymaps.Map("map", {
+            center: [{{ seller_lat }}, {{ seller_lon }}],
+            zoom: 12
+        });
+
+        var myPlacemark = new ymaps.Placemark([{{ seller_lat  }}, {{ seller_lon }}], {
+            hintContent: 'Место на карте'
+        });
+
+        myMap.geoObjects.add(myPlacemark);
+    }
+</script>
+{% endblock%}
 {% block domready%}
 
 var $rating = $('.rating-half');
@@ -88,4 +107,5 @@ $('li', $rating).on('click', function() {
     }
   });
 });
+var apikey = 'YOUR_API_KEY';
 {% endblock%}
