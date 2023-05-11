@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os
 from pathlib import Path
+from .middleware import LoginRedirectMiddleware
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -54,6 +56,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "farmer.middleware.LoginRedirectMiddleware",
+    "farmer.middleware.RegistrationRedirectMiddleware",
+    
 ]
 
 ROOT_URLCONF = "farmer.urls"
@@ -158,7 +163,6 @@ CHANNEL_LAYERS = {
     },
 }
 """
-работа с email
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ""

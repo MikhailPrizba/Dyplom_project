@@ -25,7 +25,7 @@ from cart.forms import CartAddProductForm
 from users.models import Buyer, Ratings, Seller
 
 from .models import Category, Comment, Product
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def home(request: HttpRequest, category_slug=None) -> HttpResponse:
     """Представление главной страницы."""
@@ -39,6 +39,15 @@ def home(request: HttpRequest, category_slug=None) -> HttpResponse:
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
         products = products.filter(category=category)
+
+    paginator = Paginator(products, 5)
+    page = request.GET.get("page")
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        products = paginator.page(1)
+        
+    
 
     return render(
         request,
@@ -148,11 +157,14 @@ def sellerprofile(request: HttpRequest, id: int) -> HttpResponse:
 
     profile = user.seller
     products = user.seller_products.all()
+    rating = profile.ratings_set.filter(buyer=request.user.buyer)
+    seller_lat = profile.get_real_address()[0]
+    seller_lon = profile.get_real_address()[1]
 
     return render(
         request,
         "store/profile/seller_profile.html",
-        {"profile": profile, "products": products},
+        {"profile": profile, "products": products, "rating": rating, "seller_lat": seller_lat, "seller_lon": seller_lon},
     )
 
 
@@ -198,10 +210,10 @@ class Search(ListView):
     def get_queryset(self):
         """Возвращает список продуктов, соответствующих поисковому запросу."""
 
-        product = Product.objects.filter(
+        products = Product.objects.filter(
             name__icontains=self.request.GET.get("q"))
-
-        return product
+        
+        return products
 
     def get_context_data(self, *, object_list=None, **kwargs):
         """Добавляет поисковый запрос в контекст шаблона."""
@@ -214,7 +226,7 @@ class Search(ListView):
         """Отображает ответ и перенаправляет на главную страницу магазина, если
         результаты поиска не найдены."""
 
-        if not Search.get_queryset(self):
+        if not Search.get_queryset(self) or not context["q"]:
             return redirect("store:home")
         else:
             return super().render_to_response(context, **response_kwargs)

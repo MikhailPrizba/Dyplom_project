@@ -10,6 +10,8 @@ from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Avg
+import requests
+from django.core.exceptions import ValidationError
 
 
 class Seller(models.Model):
@@ -18,7 +20,10 @@ class Seller(models.Model):
         User, on_delete=models.CASCADE
     )
     photo: models.ImageField = models.ImageField(upload_to="images/seller_photos/", blank=True)
+    country : models.CharField = models.CharField(max_length=100, blank=True)
+    city : models.CharField = models.CharField(max_length=100, blank=True)
     address: models.CharField = models.CharField(max_length=100, blank=True)
+    house_number: models.CharField = models.CharField(max_length=100, blank=True)
     phone_number: models.CharField = models.CharField(max_length=20, blank=True)
     is_seller: models.BooleanField = models.BooleanField(default=True)
 
@@ -32,7 +37,20 @@ class Seller(models.Model):
         return round((ratings["rating__avg"]/2), 1)
 
 
-
+    def get_real_address(self):
+        url = 'https://nominatim.openstreetmap.org/search/'
+        address = f" {self.house_number}/{self.address} {self.city} {self.country}"
+        params = {
+            'q': address,
+            'format': 'json',
+        }
+        response = requests.get(url, params=params)
+        data = response.json()
+        lat = data[0]["lat"]
+        lon = data[0]["lon"]
+        
+        return (lat, lon)
+    
 class Buyer(models.Model):
     """Модель профиля покупателя."""
     user: models.OneToOneField[User] = models.OneToOneField(
