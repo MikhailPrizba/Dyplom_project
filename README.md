@@ -31,7 +31,7 @@
 4. Установка библиотек выполнение миграций миграций:
 
     ```
-    pip install -r requirements.txt
+    pip start
     ```
 
 5. Запустите redis-server

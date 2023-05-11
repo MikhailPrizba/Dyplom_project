@@ -21,8 +21,8 @@ format:
 
 start:
 	pip install -r requirements.txt
-	python3 ${FORMAT_FOLDER}/manage.py makemigration
+	python3 ${FORMAT_FOLDER}/manage.py makemigrations
 	python3 ${FORMAT_FOLDER}/manage.py migrate
 
-startserver:
+runserver:
 	python3 ${FORMAT_FOLDER}/manage.py runserver

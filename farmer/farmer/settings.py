@@ -144,7 +144,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 ASGI_APPLICATION = "farmer.asgi.application"
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
-#EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 LOGIN_REDIRECT_URL = "store:home"
 LOGIN_URL = "users:login"
 LOGOUT_URL = "users:logout"
@@ -162,13 +162,13 @@ CHANNEL_LAYERS = {
         },
     },
 }
-
+"""
 EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST_USER = "mishaprizbawork@gmail.com"
-EMAIL_HOST_PASSWORD = "gizuexujhsbbxmyh"
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
+"""
 
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_RESULT_BACKEND = "redis://localhost:6379"

@@ -3,7 +3,7 @@ from typing import Union
 from django.contrib.auth.models import User
 from django.http import HttpRequest
 import requests
-from django.core.exceptions import ValidationError
+
 
 
 class EmailAuthBackend:
