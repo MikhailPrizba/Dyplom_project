@@ -53,5 +53,5 @@ class ChatMessage(models.Model):
 
     def __str__(self):
         return (
-            f"{self.buyer.username}'s chat with {self.seller.username}: {self.message}"
+            f"{self.chat_room.buyer.username}'s chat with {self.chat_room.seller.username}: {self.message}"
         )

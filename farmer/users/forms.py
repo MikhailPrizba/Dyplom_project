@@ -33,8 +33,10 @@ class SellerForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model: type = User
-        fields: tuple[str, str, str, str] = (
+        fields: tuple[str] = (
             "username",
+            "first_name",
+            "last_name",
             "email",
             "password1",
             "password2",
@@ -55,7 +57,13 @@ class SellerForm(UserCreationForm):
     
     
     def clean_house_number(self) -> str:
-        print(self.cleaned_data)
+        """Проверяет уникальность номера дома, в
+        введенной в форму.
+
+        Если номер дома уже используется в другой учетной записи,
+        генерируется исключение
+        """
+        
         address = self.cleaned_data["address"]
         city = self.cleaned_data["city"]
         house_number = self.cleaned_data["house_number"]
@@ -148,4 +156,6 @@ class SellerEditForm(forms.ModelForm):
 
     class Meta:
         model: type = Seller
-        fields: list[str] = ["photo", "address","city","house_number", "country", "phone_number"]
+        fields: list[str] = ["photo", "house_number", "phone_number"]
+
+    
