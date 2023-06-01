@@ -54,14 +54,10 @@ def edit(request: HttpRequest) -> HttpResponse:
     """Редактирование профиля."""
     if request.method == "POST":
         user_form = UserEditForm(instance=request.user, data=request.POST)
-        if request.user.is_staff:
-            profile_form = SellerEditForm(
-                instance=request.user.seller, data=request.POST, files=request.FILES
-            )
-        else:
-            profile_form = BuyerEditForm(
-                instance=request.user.buyer, data=request.POST, files=request.FILES
-            )
+        form_type = SellerEditForm if request.user.is_staff else BuyerEditForm
+        data, files =request.POST, request.FILES
+        user_type = "seller" if request.user.is_staff else "buyer"
+        profile_form = form_type(instance=getattr(request.user, user_type), data=data, files=files)
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()

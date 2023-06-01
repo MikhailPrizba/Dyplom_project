@@ -13,6 +13,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.db import transaction
 
 from .models import Buyer, Seller
 from .authentication import is_real_address
@@ -57,11 +58,8 @@ class SellerForm(UserCreationForm):
     
     
     def clean_house_number(self) -> str:
-        """Проверяет уникальность номера дома, в
-        введенной в форму.
-
-        Если номер дома уже используется в другой учетной записи,
-        генерируется исключение
+        """Проверяет существование адреса, в
+        введенной в форму
         """
         
         address = self.cleaned_data["address"]
@@ -70,7 +68,7 @@ class SellerForm(UserCreationForm):
         country = self.cleaned_data["country"]
         
         address_all = f" {house_number}/{address} {city} {country}  "
-        print(address_all)
+        
         
         if not is_real_address(address_all):
             raise forms.ValidationError("Введите реальный адрес.")
@@ -80,23 +78,24 @@ class SellerForm(UserCreationForm):
         """Создает объект Seller и привязывает его."""
         user: User = super().save(commit=False)
         user.is_seller = True
-        user.save()
-        seller: Seller = Seller.objects.create(
-            user=user,
-            photo=self.cleaned_data["photo"],
-            country=self.cleaned_data["country"],
-            city=self.cleaned_data["city"],
-            address=self.cleaned_data["address"],
-            house_number=self.cleaned_data["house_number"],
-            
-            phone_number=self.cleaned_data["phone_number"],
-        )
+        with transaction.atomic():
+            user.save()
+            seller: Seller = Seller.objects.create(
+                user=user,
+                photo=self.cleaned_data["photo"],
+                country=self.cleaned_data["country"],
+                city=self.cleaned_data["city"],
+                address=self.cleaned_data["address"],
+                house_number=self.cleaned_data["house_number"],
+                
+                phone_number=self.cleaned_data["phone_number"],
+            )
 
-        
-        # создаем объект Seller и привязываем его к пользователю
-        
-        if commit:
-            seller.save()
+            
+            # создаем объект Seller и привязываем его к пользователю
+            
+            if commit:
+                seller.save()
         return user
 
 
@@ -124,14 +123,15 @@ class BuyerForm(UserCreationForm):
     def save(self, commit: bool = True) -> User:
         """Создает объект Buyer и привязывает его."""
         user: User = super().save(commit=False)
-        user.is_buyer = True
-        user.save()
-        buyer: Buyer = Buyer.objects.create(
-            user=user, phone_number=self.cleaned_data["phone_number"]
-        )
-        # создаем объект Seller и привязываем его к пользователю
-        if commit:
-            buyer.save()
+        with transaction.atomic():
+            user.is_buyer = True
+            user.save()
+            buyer: Buyer = Buyer.objects.create(
+                user=user, phone_number=self.cleaned_data["phone_number"]
+            )
+            # создаем объект Buyer и привязываем его к пользователю
+            if commit:
+                buyer.save()
         return user
 
 

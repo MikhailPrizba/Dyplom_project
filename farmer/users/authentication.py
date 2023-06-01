@@ -20,9 +20,7 @@ class EmailAuthBackend:
         """
         try:
             user = User.objects.get(email=username)
-            if user.check_password(password):
-                return user
-            return None
+            return user if user.check_password(password) else None
         except (User.DoesNotExist, User.MultipleObjectsReturned):
             return None
 
@@ -33,26 +31,15 @@ class EmailAuthBackend:
         except User.DoesNotExist:
             return None
 
-
-
-
-
-
-
-
-
-
-
 def is_real_address(address: str) -> bool:
     url = 'https://nominatim.openstreetmap.org/search/'
     params = {
         'q': address,
         'format': 'json',
     }
-    response = requests.get(url, params=params)
-    data = response.json()
-    print(data)
-    if not data:
+    try:
+        response = requests.get(url, params=params)
+    except requests.exceptions.RequestException:
         return False
-
-    return True
+    else:
+        return bool(response.json())

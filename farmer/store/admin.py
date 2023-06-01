@@ -28,9 +28,9 @@ class ProductAdmin(admin.ModelAdmin):
     def get_queryset(self, request: HttpRequest) -> QuerySet:
         """Возвращает набор запросов на основе роли пользователя."""
         qs = super().get_queryset(request)
-        if request.user.is_superuser:
-            return qs
-        return qs.filter(seller=request.user)
+        if not request.user.is_superuser:
+            qs = qs.filter(seller=request.user)
+        return qs
 
     def save_model(
         self, request: HttpRequest, obj: Product, form, change: bool
